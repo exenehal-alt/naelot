@@ -1,21 +1,48 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# CircleChat ProGuard / R8 Rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep line numbers & source file names for readable crash stack traces
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep Kotlin & Annotation metadata
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep @Keep annotated classes and members (including Firestore data models)
+-keep class androidx.annotation.Keep
+-keep @androidx.annotation.Keep class * { *; }
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+# Preserve all Firestore models, fields, and no-arg constructors for CustomClassMapper
+-keepclassmembers class com.example.data.model.** {
+    <init>(...);
+    <fields>;
+    <methods>;
+}
+-keep class com.example.data.model.** { *; }
+
+# Firebase Firestore & Auth annotations
+-keepattributes RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations
+-keepclassmembers class * {
+    @com.google.firebase.firestore.DocumentId *;
+    @com.google.firebase.firestore.ServerTimestamp *;
+    @com.google.firebase.firestore.PropertyName *;
+    @com.google.firebase.firestore.Exclude *;
+}
+
+# Credential Manager & Google Identity Services
+-keep class androidx.credentials.** { *; }
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+
+# CameraX
+-keep class androidx.camera.** { *; }
+
+# OkHttp & Coroutines warnings suppression
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
+-dontwarn okhttp3.**
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler
+-keepclassmembers class kotlinx.coroutines.** { volatile <fields>; }
