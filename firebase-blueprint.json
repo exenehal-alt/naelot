@@ -1,0 +1,148 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Authenticated friend user profile stored under /users/{userId}. Clients must write FieldValue.serverTimestamp() for lastSeen, createdAt, and updatedAt.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID of the user." },
+        "name": { "type": "string", "description": "Full display name." },
+        "username": { "type": "string", "description": "Unique lowercase handle." },
+        "statusText": { "type": "string", "description": "Custom friend status message." },
+        "avatarData": { "type": "string", "description": "Avatar preset identifier or compressed image data." },
+        "circleId": { "type": "string", "description": "Joined private friend circle ID." },
+        "online": { "type": "boolean", "description": "Live online status." },
+        "lastSeen": { "type": "string", "format": "date-time", "description": "Last active timestamp (FieldValue.serverTimestamp())." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": ["userId", "name", "username", "statusText", "avatarData", "circleId", "online", "lastSeen", "createdAt", "updatedAt"]
+    },
+    "Circle": {
+      "title": "Circle",
+      "description": "Private friends-only circle holding member UIDs and embedded friend directory summaries. Clients must write FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Display name of the private friend circle." },
+        "inviteCode": { "type": "string", "description": "Private invite code for joining the circle." },
+        "ownerId": { "type": "string", "description": "UID of the circle creator." },
+        "memberUids": { "type": "array", "description": "Bounded list of member UIDs (max 50)." },
+        "members": { "type": "object", "description": "Map keyed by userId containing public friend summary maps." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": ["name", "inviteCode", "ownerId", "memberUids", "members", "createdAt", "updatedAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "1-on-1 DM or private group chat room. Clients must write FieldValue.serverTimestamp() for lastMessageAt, createdAt, and updatedAt.",
+      "type": "object",
+      "properties": {
+        "groupChat": { "type": "boolean", "description": "True if private group chat, false if 1-on-1 DM." },
+        "groupName": { "type": "string", "description": "Group display name." },
+        "groupAvatar": { "type": "string", "description": "Group avatar preset or data." },
+        "participantIds": { "type": "array", "description": "List of participant UIDs (max 50)." },
+        "participantNames": { "type": "object", "description": "Map of participant UID to display name." },
+        "lastMessageText": { "type": "string", "description": "Preview text of latest message." },
+        "lastMessageType": { "type": "string", "description": "Type of latest message." },
+        "lastMessageSenderId": { "type": "string", "description": "UID of latest message sender." },
+        "lastMessageAt": { "type": "string", "format": "date-time", "description": "Timestamp of latest message (FieldValue.serverTimestamp())." },
+        "pinnedMessageIds": { "type": "array", "description": "Pinned message IDs (max 20)." },
+        "typingUserIds": { "type": "array", "description": "UIDs currently typing (max 50)." },
+        "createdBy": { "type": "string", "description": "UID of conversation creator." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp (FieldValue.serverTimestamp())." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp (FieldValue.serverTimestamp())." }
+      },
+      "required": ["groupChat", "groupName", "groupAvatar", "participantIds", "participantNames", "lastMessageText", "lastMessageType", "lastMessageSenderId", "lastMessageAt", "pinnedMessageIds", "typingUserIds", "createdBy", "createdAt", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Persistent chat message supporting rich typography, media metadata, chunked large files, polls, GIFs, and call logs. Clients must write FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "participantIds": { "type": "array", "description": "Denormalized participant UIDs for flat rule evaluation." },
+        "type": {
+          "type": "string",
+          "enum": ["text", "image", "video", "audio", "voice", "file", "poll", "gif", "call_log"]
+        },
+        "content": { "type": "string" },
+        "fontFamily": {
+          "type": "string",
+          "enum": ["sans", "serif", "mono", "script", "display"]
+        },
+        "textColorKey": {
+          "type": "string",
+          "enum": ["default", "cyan", "amber", "emerald", "rose", "violet"]
+        },
+        "bold": { "type": "boolean" },
+        "italic": { "type": "boolean" },
+        "underline": { "type": "boolean" },
+        "strikethrough": { "type": "boolean" },
+        "inlineCode": { "type": "boolean" },
+        "blockquote": { "type": "boolean" },
+        "mediaMeta": { "type": "object" },
+        "pollData": { "type": "object" },
+        "replyToMessageId": { "type": "string" },
+        "replyToSenderName": { "type": "string" },
+        "replyToPreview": { "type": "string" },
+        "reactions": { "type": "object" },
+        "seenBy": { "type": "array" },
+        "deliveredTo": { "type": "array" },
+        "edited": { "type": "boolean" },
+        "deleted": { "type": "boolean" },
+        "pinned": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "senderId", "senderName", "participantIds", "type", "content", "fontFamily", "textColorKey", "bold", "italic", "underline", "strikethrough", "inlineCode", "blockquote", "reactions", "seenBy", "deliveredTo", "edited", "deleted", "pinned", "createdAt", "updatedAt"]
+    },
+    "CallSession": {
+      "title": "CallSession",
+      "description": "Real-time audio/video call signaling and session record. Clients must write FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "callerId": { "type": "string" },
+        "callerName": { "type": "string" },
+        "calleeIds": { "type": "array" },
+        "participantIds": { "type": "array" },
+        "callType": { "type": "string", "enum": ["audio", "video"] },
+        "status": { "type": "string", "enum": ["ringing", "active", "ended", "declined", "missed"] },
+        "offerSdp": { "type": "string" },
+        "answerSdp": { "type": "string" },
+        "callerMuted": { "type": "boolean" },
+        "callerCameraOn": { "type": "boolean" },
+        "screenSharing": { "type": "boolean" },
+        "durationSeconds": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "callerId", "callerName", "calleeIds", "participantIds", "callType", "status", "offerSdp", "answerSdp", "callerMuted", "callerCameraOn", "screenSharing", "durationSeconds", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Private user profiles keyed by Firebase Auth UID."
+    },
+    "/circles/{circleId}": {
+      "schema": { "$ref": "#/entities/Circle" },
+      "description": "Private friend circles and member directory summaries."
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "1-on-1 DM and group conversation metadata."
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Messages belonging to a conversation."
+    },
+    "/calls/{callId}": {
+      "schema": { "$ref": "#/entities/CallSession" },
+      "description": "Real-time audio/video call signaling sessions."
+    }
+  }
+}

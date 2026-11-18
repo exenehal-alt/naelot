@@ -1,0 +1,6 @@
+{
+  "name": "CircleChat",
+  "description": "Private friends-only real-time messaging, rich typography, media & chunked large file sharing, interactive polls, and WebRTC audio/video calling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
